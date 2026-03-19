@@ -48,8 +48,10 @@ function parseJson(content: string): ExtractResult {
       totalAmount: json.totalAmount || 0,
       taxAmount: json.taxAmount,
       currency: json.currency || "N/A",
-      items: json.items || [],
-      expenseAccount: json.expenseAccount,
+      items: (json.items || []).map((item: any) => ({
+        ...item,
+        expenseAccount: item.expenseAccount || undefined
+      })),
       rawText: content.slice(0, 500)
     };
   } catch (e: any) {
