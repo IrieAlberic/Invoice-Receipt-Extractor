@@ -44,7 +44,7 @@ const PROVIDERS = [
   {
     id: 'deepseek',
     name: 'DeepSeek',
-    quota: 'API — Gratuit (Text-only via DeepSeek, Vision via SiliconFlow)',
+    quota: 'API — Gratuit',
     link: 'https://platform.deepseek.com/api_keys',
     models: [
       { id: 'deepseek-ai/deepseek-vl2', name: 'DeepSeek-VL2', description: 'Vision model via SiliconFlow/HF API' },
@@ -70,6 +70,32 @@ const PROVIDERS = [
     link: 'https://ocr.space/ocrapi',
     models: [
       { id: 'ocr-space-engine2', name: 'OCR.space Engine 2', description: 'Moteur IA pour reçus/factures, 26 langues' },
+    ]
+  },
+  {
+    id: 'ollama',
+    name: 'Ollama (Local)',
+    quota: 'Local — Gratuit (VRAM dépendant)',
+    link: 'https://ollama.com',
+    isLocal: true,
+    models: [
+      { id: 'lighton/lightonocr-2:latest', name: 'LightOnOCR-2', description: 'Optimisé OCR, ~2 Go VRAM' },
+      { id: 'got-ocr2', name: 'GOT-OCR 2.0', description: 'General OCR Theory, ~2 Go VRAM' },
+      { id: 'olmocr', name: 'OlmOCR-2', description: 'Haute performance, ~9 Go VRAM' },
+    ]
+  },
+  {
+    id: 'python',
+    name: 'Microservice Python',
+    quota: 'Local — Gratuit',
+    link: 'http://localhost:8001',
+    isLocal: true,
+    models: [
+      { id: 'tesseract', name: 'Tesseract', description: 'Moteur classique robuste' },
+      { id: 'easyocr', name: 'EasyOCR', description: 'Supporte 80+ langues, basé sur PyTorch' },
+      { id: 'paddleocr', name: 'PaddleOCR', description: 'Baidu, excellent sur les reçus' },
+      { id: 'docling', name: 'Docling', description: 'IBM, spécialisé structuration document' },
+      { id: 'rapidocr', name: 'RapidOCR', description: 'Version légère et performante de Paddle' },
     ]
   },
 ];
@@ -262,6 +288,14 @@ export default function App() {
             <h2 className="text-xs font-mono font-bold uppercase tracking-widest opacity-50 border-b border-[#141414]/10 pb-2">
               02. Provider Configuration
             </h2>
+            {window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                <AlertCircle size={14} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                <p className="text-[10px] text-amber-800 leading-tight">
+                  <span className="font-bold uppercase">Cloud Mode Active</span>: Les modèles <strong>Ollama</strong> et <strong>Python</strong> locaux ne seront pas accessibles depuis ce domaine. Utilisez les modèles Cloud (Gemini, Groq, Mistral) pour tester.
+                </p>
+              </div>
+            )}
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {PROVIDERS.map((provider) => {
                 const config = activeProviders[provider.id];
@@ -280,6 +314,11 @@ export default function App() {
                         <div className={`w-2 h-2 rounded-full ${config.enabled ? 'bg-emerald-500' : 'bg-gray-300'}`}></div>
                         <h3 className="text-xs font-bold uppercase tracking-tight">
                           {provider.name}
+                          {provider.isLocal && (
+                            <span className="ml-2 bg-amber-100 text-amber-700 text-[8px] px-1.5 py-0.5 rounded border border-amber-200">
+                              LOCAL ONLY
+                            </span>
+                          )}
                           {activeCount > 0 && config.enabled && (
                             <span className="ml-2 bg-[#141414] text-white text-[8px] px-1.5 py-0.5 rounded-full">
                               {activeCount}
