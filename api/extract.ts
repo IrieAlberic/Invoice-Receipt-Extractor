@@ -23,6 +23,7 @@ interface ExtractResult {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
+    expenseAccount?: string;
   }>;
   rawText?: string;
 }

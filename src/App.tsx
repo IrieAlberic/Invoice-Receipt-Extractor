@@ -593,14 +593,21 @@ export default function App() {
                                 <p className="text-[10px] font-mono opacity-50 uppercase tracking-widest">Line Items</p>
                                 <div className="space-y-1">
                                   {result.data?.items.map((item, i) => (
-                                    <div key={i} className="flex justify-between items-center p-2 bg-[#E4E3E0]/30 rounded-lg text-xs">
+                                    <div key={i} className="flex justify-between items-start p-2 bg-[#E4E3E0]/30 rounded-lg text-xs">
                                       <div className="flex-1">
                                         <p className="font-bold">{item.description}</p>
-                                        <p className="text-[10px] opacity-50 font-mono">
-                                          {item.quantity} x {item.unitPrice} {result.data?.currency}
-                                        </p>
+                                        <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                          <p className="text-[10px] opacity-50 font-mono">
+                                            {item.quantity} x {item.unitPrice} {result.data?.currency}
+                                          </p>
+                                          {item.expenseAccount && (
+                                            <span className="text-[9px] font-bold bg-[#141414]/10 text-[#141414] px-1.5 py-0.5 rounded border border-[#141414]/20 uppercase tracking-tighter">
+                                              Compte: {item.expenseAccount}
+                                            </span>
+                                          )}
+                                        </div>
                                       </div>
-                                      <p className="font-bold">{item.totalPrice} {result.data?.currency}</p>
+                                      <p className="font-bold shrink-0 ml-2">{item.totalPrice} {result.data?.currency}</p>
                                     </div>
                                   ))}
                                 </div>

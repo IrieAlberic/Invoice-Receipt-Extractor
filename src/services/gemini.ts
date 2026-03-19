@@ -9,6 +9,7 @@ export interface ReceiptData {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
+    expenseAccount?: string;
   }>;
   taxAmount: number;
   totalAmount: number;
@@ -30,6 +31,7 @@ export const receiptSchema = {
           quantity: { type: Type.NUMBER },
           unitPrice: { type: Type.NUMBER },
           totalPrice: { type: Type.NUMBER },
+          expenseAccount: { type: Type.STRING, description: "Matching expense account (e.g., 6061 - Supplies, 6251 - Travel)" },
         },
         required: ["description", "totalPrice"],
       },
@@ -57,7 +59,9 @@ export async function extractReceiptData(
   pythonUrl?: string
 ): Promise<ExtractionResult> {
   const startTime = performance.now();
-  const prompt = "Extract all relevant data from this receipt or invoice into the specified JSON format. Be precise with numbers and descriptions.";
+  const prompt = `Extract all relevant data from this receipt or invoice into the specified JSON format. 
+  For each item, try to attribute a logical "expenseAccount" (accounting code) based on the product name (e.g., '6061 - Office Supplies', '6251 - Travel', '6047 - Software'). 
+  Be precise with numbers and descriptions. Return ONLY valid JSON.`;
 
   try {
     if (provider === 'google') {
