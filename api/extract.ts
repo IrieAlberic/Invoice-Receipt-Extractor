@@ -29,16 +29,36 @@ interface ExtractResult {
 }
 
 function parseJson(content: string): ExtractResult {
-  const clean = content.replace(/```json|```/g, "").trim();
   try {
-    return JSON.parse(clean);
-  } catch (e) {
+    // Attempt to find the first '{' and last '}' to extract only the JSON object
+    const startIdx = content.indexOf('{');
+    const endIdx = content.lastIndexOf('}');
+    
+    if (startIdx === -1 || endIdx === -1) {
+      throw new Error("No JSON object found in response");
+    }
+    
+    const jsonStr = content.substring(startIdx, endIdx + 1);
+    const json = JSON.parse(jsonStr);
+    
+    return {
+      vendorName: json.vendorName || "Unknown",
+      date: json.date,
+      invoiceNumber: json.invoiceNumber,
+      totalAmount: json.totalAmount || 0,
+      taxAmount: json.taxAmount,
+      currency: json.currency || "N/A",
+      items: json.items || [],
+      expenseAccount: json.expenseAccount,
+      rawText: content.slice(0, 500)
+    };
+  } catch (e: any) {
     return {
       vendorName: "Parse Error",
       totalAmount: 0,
       currency: "N/A",
       items: [],
-      rawText: clean
+      rawText: `Error: ${e.message}\n\nContent: ${content.slice(0, 500)}`
     };
   }
 }
