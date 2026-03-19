@@ -1,0 +1,33 @@
+{
+  "name": "invoice-receipt-extractor",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "server": "tsx server.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^0.3.0",
+    "motion": "^12.0.0",
+    "lucide-react": "^0.358.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "express": "^4.18.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6",
+    "tsx": "^4.7.1"
+  }
+}

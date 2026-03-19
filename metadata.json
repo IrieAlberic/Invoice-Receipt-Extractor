@@ -1,0 +1,21 @@
+{
+  "name": "Invoice-Receipt-Extractor",
+  "version": "1.0.0",
+  "description": "Modern AI-powered invoice and receipt data extraction tool built with React, Vite, and Gemini AI.",
+  "author": "Antigravity AI",
+  "features": [
+    "Gemini 1.5 Flash integration",
+    "Glassmorphic UI",
+    "Real-time extraction",
+    "Responsive design",
+    "File upload handling"
+  ],
+  "technologies": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "Express",
+    "Framer Motion",
+    "Lucide React"
+  ]
+}
