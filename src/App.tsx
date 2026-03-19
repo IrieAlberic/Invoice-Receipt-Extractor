@@ -288,14 +288,6 @@ export default function App() {
             <h2 className="text-xs font-mono font-bold uppercase tracking-widest opacity-50 border-b border-[#141414]/10 pb-2">
               02. Provider Configuration
             </h2>
-            {window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && (
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
-                <AlertCircle size={14} className="text-amber-600 mt-0.5 flex-shrink-0" />
-                <p className="text-[10px] text-amber-800 leading-tight">
-                  <span className="font-bold uppercase">Cloud Mode Active</span>: Les modèles <strong>Ollama</strong> et <strong>Python</strong> locaux ne seront pas accessibles depuis ce domaine. Utilisez les modèles Cloud (Gemini, Groq, Mistral) pour tester.
-                </p>
-              </div>
-            )}
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {PROVIDERS.map((provider) => {
                 const config = activeProviders[provider.id];
@@ -314,11 +306,6 @@ export default function App() {
                         <div className={`w-2 h-2 rounded-full ${config.enabled ? 'bg-emerald-500' : 'bg-gray-300'}`}></div>
                         <h3 className="text-xs font-bold uppercase tracking-tight">
                           {provider.name}
-                          {provider.isLocal && (
-                            <span className="ml-2 bg-amber-100 text-amber-700 text-[8px] px-1.5 py-0.5 rounded border border-amber-200">
-                              LOCAL ONLY
-                            </span>
-                          )}
                           {activeCount > 0 && config.enabled && (
                             <span className="ml-2 bg-[#141414] text-white text-[8px] px-1.5 py-0.5 rounded-full">
                               {activeCount}
@@ -327,9 +314,6 @@ export default function App() {
                         </h3>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[8px] font-mono text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 whitespace-nowrap">
-                          {provider.quota}
-                        </span>
                         <button
                           onClick={() => toggleProvider(provider.id)}
                           className={`text-[10px] font-mono uppercase px-2 py-1 rounded border transition-colors ${config.enabled
