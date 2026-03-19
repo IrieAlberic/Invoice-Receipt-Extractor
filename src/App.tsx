@@ -27,8 +27,10 @@ const PROVIDERS = [
     quota: 'Quota quotidien — Gratuit',
     link: 'https://console.groq.com/keys',
     models: [
-      { id: 'llama-3.2-11b-vision-preview', name: 'Llama 3.2 Vision 11B', description: 'Rapide, excellente compréhension visuelle' },
-      { id: 'llama-3.2-90b-vision-preview', name: 'Llama 3.2 Vision 90B', description: 'Le plus puissant sur Groq pour les documents' },
+      { id: 'meta-llama/llama-4-scout-17b-16e-instruct', name: 'Llama 4 Scout (Vision)', description: 'Nouveau modèle multimodal puissant' },
+      { id: 'groq/compound', name: 'Groq Compound (Vision)', description: 'Modèle vision optimisé par Groq' },
+      { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', description: 'Modèle texte ultra-performant' },
+      { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', description: 'Modèle rapide et léger' },
     ]
   },
   {

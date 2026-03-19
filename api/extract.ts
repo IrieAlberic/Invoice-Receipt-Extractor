@@ -105,8 +105,8 @@ async function handleMistralOCR(
     body: JSON.stringify({
       model: body.modelId,
       document: {
-        type: "content",
-        content: `data:${body.mimeType};base64,${body.fileBase64}`
+        type: "document_url",
+        document_url: `data:${body.mimeType};base64,${body.fileBase64}`
       }
     })
   });
