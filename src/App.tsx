@@ -293,9 +293,14 @@ export default function App() {
               02. Cloud-to-Local Tunnels
             </h2>
             <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
-              <p className="text-[10px] font-mono text-amber-800 uppercase leading-tight font-bold">
-                Access local PC models from Vercel/Web via ngrok or Cloudflare Tunnels:
-              </p>
+              <div className="flex flex-col gap-1">
+                <p className="text-[10px] font-mono text-amber-800 uppercase leading-tight font-bold">
+                  Cloud-to-Local Tunnels (Shared Access)
+                </p>
+                <p className="text-[9px] text-amber-700/70 italic leading-tight">
+                  Temporary override. For a permanent tutor-accessible setup, set <code className="font-bold">OLLAMA_PROXY_URL</code> in the Vercel Dashboard.
+                </p>
+              </div>
               <div className="space-y-2">
                 <div>
                   <label className="text-[9px] font-bold uppercase opacity-60 ml-1">Ollama Proxy URL (ex: ngrok)</label>

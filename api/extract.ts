@@ -198,7 +198,8 @@ async function handleOcrSpace(body: ExtractRequest): Promise<ExtractResult> {
 // ─── Local Handlers (Ollama & Python) ───────────────────────────────────────
 
 async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
-  const baseUrl = body.ollamaUrl ? `${body.ollamaUrl}/api/chat` : "http://localhost:11434/api/chat";
+  const proxyUrl = body.ollamaUrl || process.env.OLLAMA_PROXY_URL;
+  const baseUrl = proxyUrl ? `${proxyUrl}/api/chat` : "http://localhost:11434/api/chat";
   
   const response = await fetch(baseUrl, {
     method: "POST",
@@ -226,7 +227,8 @@ async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
 
 async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
   const engine = body.modelId; // tesseract, easyocr, paddleocr, etc.
-  const baseUrl = body.pythonUrl ? `${body.pythonUrl}/ocr/${engine}` : `http://localhost:8001/ocr/${engine}`;
+  const proxyUrl = body.pythonUrl || process.env.PYTHON_PROXY_URL;
+  const baseUrl = proxyUrl ? `${proxyUrl}/ocr/${engine}` : `http://localhost:8001/ocr/${engine}`;
   
   const response = await fetch(baseUrl, {
     method: "POST",
