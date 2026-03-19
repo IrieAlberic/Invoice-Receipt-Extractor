@@ -52,7 +52,9 @@ export async function extractReceiptData(
   fileBase64: string,
   mimeType: string,
   modelId: string,
-  provider: string
+  provider: string,
+  ollamaUrl?: string,
+  pythonUrl?: string
 ): Promise<ExtractionResult> {
   const startTime = performance.now();
   const prompt = "Extract all relevant data from this receipt or invoice into the specified JSON format. Be precise with numbers and descriptions.";
@@ -93,7 +95,9 @@ export async function extractReceiptData(
           modelId,
           provider,
           prompt,
-          schema: receiptSchema
+          schema: receiptSchema,
+          ollamaUrl,
+          pythonUrl
         })
       });
 

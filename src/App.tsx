@@ -112,6 +112,8 @@ export default function App() {
   const [preview, setPreview] = useState<string | null>(null);
   const [results, setResults] = useState<ExtractionResult[]>([]);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [ollamaUrl, setOllamaUrl] = useState("");
+  const [pythonUrl, setPythonUrl] = useState("");
 
   // Initialize one entry per provider
   const [activeProviders, setActiveProviders] = useState<Record<string, ProviderConfig>>(() => {
@@ -179,7 +181,7 @@ export default function App() {
     const mimeType = file.type;
 
     const extractionPromises = selectedTasks.map(({ providerId, modelId }) =>
-      extractReceiptData(base64Data, mimeType, modelId, providerId)
+      extractReceiptData(base64Data, mimeType, modelId, providerId, ollamaUrl, pythonUrl)
     );
 
     try {
@@ -288,7 +290,40 @@ export default function App() {
 
           <section className="space-y-4">
             <h2 className="text-xs font-mono font-bold uppercase tracking-widest opacity-50 border-b border-[#141414]/10 pb-2">
-              02. Provider Configuration
+              02. Cloud-to-Local Tunnels
+            </h2>
+            <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
+              <p className="text-[10px] font-mono text-amber-800 uppercase leading-tight font-bold">
+                Access local PC models from Vercel/Web via ngrok or Cloudflare Tunnels:
+              </p>
+              <div className="space-y-2">
+                <div>
+                  <label className="text-[9px] font-bold uppercase opacity-60 ml-1">Ollama Proxy URL (ex: ngrok)</label>
+                  <input 
+                    type="text" 
+                    placeholder="http://localhost:11434"
+                    value={ollamaUrl}
+                    onChange={(e) => setOllamaUrl(e.target.value)}
+                    className="w-full bg-white border border-[#141414]/10 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#141414]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] font-bold uppercase opacity-60 ml-1">Python OCR Proxy URL</label>
+                  <input 
+                    type="text" 
+                    placeholder="http://localhost:8001"
+                    value={pythonUrl}
+                    onChange={(e) => setPythonUrl(e.target.value)}
+                    className="w-full bg-white border border-[#141414]/10 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#141414]"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xs font-mono font-bold uppercase tracking-widest opacity-50 border-b border-[#141414]/10 pb-2">
+              03. Provider Configuration
             </h2>
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {PROVIDERS.map((provider) => {

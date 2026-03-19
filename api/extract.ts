@@ -7,6 +7,8 @@ interface ExtractRequest {
   prompt: string;
   provider: string;
   modelId: string;
+  ollamaUrl?: string;
+  pythonUrl?: string;
 }
 
 interface ExtractResult {
@@ -195,7 +197,7 @@ async function handleOcrSpace(body: ExtractRequest): Promise<ExtractResult> {
 // ─── Local Handlers (Ollama & Python) ───────────────────────────────────────
 
 async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
-  const baseUrl = "http://localhost:11434/api/chat";
+  const baseUrl = body.ollamaUrl ? `${body.ollamaUrl}/api/chat` : "http://localhost:11434/api/chat";
   
   const response = await fetch(baseUrl, {
     method: "POST",
@@ -223,7 +225,7 @@ async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
 
 async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
   const engine = body.modelId; // tesseract, easyocr, paddleocr, etc.
-  const baseUrl = `http://localhost:8001/ocr/${engine}`;
+  const baseUrl = body.pythonUrl ? `${body.pythonUrl}/ocr/${engine}` : `http://localhost:8001/ocr/${engine}`;
   
   const response = await fetch(baseUrl, {
     method: "POST",
@@ -282,9 +284,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
         break;
       case "deepseek":
-        const deepseekKey = process.env.SILICONFLOW_API_KEY || process.env.DEEPSEEK_API_KEY || "";
-        const deepseekBase = process.env.SILICONFLOW_API_KEY ? "https://api.siliconflow.cn/v1" : "https://api.deepseek.com/v1";
-        result = await handleOpenAICompatible(body, deepseekKey, deepseekBase);
+        const siliconKey = process.env.SILICONFLOW_API_KEY || "";
+        const deepseekKey = process.env.DEEPSEEK_API_KEY || "";
+        
+        // Default to DeepSeek official
+        let targetKey = deepseekKey || siliconKey;
+        let targetBase = "https://api.deepseek.com/v1";
+        
+        // FORCE SiliconFlow if vision is required (VL models) because DeepSeek official is text-only
+        if (body.modelId.toLowerCase().includes("vl") || (!deepseekKey && siliconKey)) {
+          if (!siliconKey) throw new Error("SiliconFlow API Key is required for DeepSeek Vision/VL models.");
+          targetKey = siliconKey;
+          targetBase = "https://api.siliconflow.cn/v1";
+        }
+        
+        result = await handleOpenAICompatible(body, targetKey, targetBase);
         break;
       case "hf":
         result = await handleHuggingFace(body);
