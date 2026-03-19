@@ -81,9 +81,9 @@ const PROVIDERS = [
     link: 'https://ollama.com',
     isLocal: true,
     models: [
-      { id: 'lighton/lightonocr-2:latest', name: 'LightOnOCR-2', description: 'Optimisé OCR, ~2 Go VRAM' },
-      { id: 'got-ocr2', name: 'GOT-OCR 2.0', description: 'General OCR Theory, ~2 Go VRAM' },
-      { id: 'olmocr', name: 'OlmOCR-2', description: 'Haute performance, ~9 Go VRAM' },
+      { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2', description: 'Optimisé OCR, ~2 Go VRAM' },
+      { id: 'ucas-vg/got-ocr2', name: 'GOT-OCR 2.0', description: 'General OCR Theory, ~2 Go VRAM' },
+      { id: 'richardyoung/olmocr2', name: 'OlmOCR-2', description: 'Haute performance, ~9 Go VRAM' },
     ]
   },
   {
@@ -297,15 +297,12 @@ export default function App() {
                 <p className="text-[10px] font-mono text-amber-800 uppercase leading-tight font-bold">
                   Cloud-to-Local Tunnels (Shared Access)
                 </p>
-                <p className="text-[9px] text-amber-700/70 italic leading-tight">
-                  Temporary override. For a permanent tutor-accessible setup, set <code className="font-bold">OLLAMA_PROXY_URL</code> in the Vercel Dashboard.
-                </p>
               </div>
               <div className="space-y-2">
                 <div>
                   <label className="text-[9px] font-bold uppercase opacity-60 ml-1">Ollama Proxy URL (ex: ngrok)</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="http://localhost:11434"
                     value={ollamaUrl}
                     onChange={(e) => setOllamaUrl(e.target.value)}
@@ -314,8 +311,8 @@ export default function App() {
                 </div>
                 <div>
                   <label className="text-[9px] font-bold uppercase opacity-60 ml-1">Python OCR Proxy URL</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="http://localhost:8001"
                     value={pythonUrl}
                     onChange={(e) => setPythonUrl(e.target.value)}
