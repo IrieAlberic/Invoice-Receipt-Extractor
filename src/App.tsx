@@ -82,8 +82,10 @@ const PROVIDERS = [
     isLocal: true,
     models: [
       { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2', description: 'Optimisé OCR, ~2 Go VRAM' },
-      { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Référence vision open-weights, ~4.7 Go' },
-      { id: 'bakllava:latest', name: 'BakLLaVA', description: 'Version améliorée de LLaVA, ~4.7 Go' },
+      { id: 'llava-phi-3-vision', name: 'Phi-3 Vision', description: 'Très bonne précision / rapidité' },
+      { id: 'qwen2-vl', name: 'Qwen2-VL', description: 'Excellent sur les structures (factures)' },
+      { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Référence vision, ~4.7 Go' },
+      { id: 'bakllava:latest', name: 'BakLLaVA', description: 'Version améliorée de LLaVA' },
     ]
   },
   {
