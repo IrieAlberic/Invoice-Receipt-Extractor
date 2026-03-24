@@ -240,8 +240,16 @@ async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
     })
   });
 
-  const json = await response.json() as any;
-  if (!response.ok) throw new Error(`Ollama error ${response.status}: ${JSON.stringify(json)}`);
+  // MODIFICATION: Read as text first to handle empty/non-JSON responses better
+  const text = await response.text();
+  if (!response.ok) throw new Error(`Ollama error ${response.status}: ${text.slice(0, 500)}`);
+  
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Ollama returned invalid JSON. Raw response: ${text.slice(0, 500)}`);
+  }
   
   const content = json.message?.content || "";
   return parseJson(content);
