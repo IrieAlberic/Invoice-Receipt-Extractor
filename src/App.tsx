@@ -81,12 +81,12 @@ const PROVIDERS = [
     link: 'https://ollama.com',
     isLocal: true,
     models: [
-      { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2', description: 'Optimisé OCR, ~2 Go VRAM' },
-      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (8B)', description: 'Vision de pointe pour OCR structuré' },
-      { id: 'gemma3:4b', name: 'Gemma3 (4B)', description: 'Modèle léger et rapide' },
-      { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Référence vision, ~4.7 Go' },
-      { id: 'bakllava:latest', name: 'BakLLaVA', description: 'Version améliorée de LLaVA' },
-      { id: 'deepseek-r1:8b', name: 'DeepSeek-R1 (8B)', description: 'Raisonnement & Analyse OCR' },
+      { id: 'paddleocr-vl', name: 'PaddleOCR-VL (#1)', description: 'Le meilleur au benchmark 2026, 94.5% précision' },
+      { id: 'dots.ocr', name: 'dots.ocr (#2)', description: 'Excellent sur le texte dense et tableaux' },
+      { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'State-of-the-art vision OCR par AI2' },
+      { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2 (#7)', description: 'Ultra-rapide, ~2 Go VRAM' },
+      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (8B)', description: 'Vision avancée pour documents structurés' },
+      { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Modèle vision polyvalent' },
     ]
   },
   {
