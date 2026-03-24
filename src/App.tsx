@@ -81,11 +81,11 @@ const PROVIDERS = [
     link: 'https://ollama.com',
     isLocal: true,
     models: [
-      { id: 'paddleocr-vl', name: 'PaddleOCR-VL (#1)', description: 'Le meilleur au benchmark 2026, 94.5% précision' },
-      { id: 'dots.ocr', name: 'dots.ocr (#2)', description: 'Excellent sur le texte dense et tableaux' },
-      { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'State-of-the-art vision OCR par AI2' },
+      { id: 'MedAIBase/PaddleOCR-VL:0.9b', name: 'PaddleOCR-VL (#1)', description: 'SOTA document parser (0.9B params)' },
+      { id: 'qwen2.5-vl', name: 'Qwen2.5-VL (Flagship)', description: 'Nouveau standard vision de Qwen' },
+      { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'SOTA vision OCR par AI2' },
       { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2 (#7)', description: 'Ultra-rapide, ~2 Go VRAM' },
-      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (8B)', description: 'Vision avancée pour documents structurés' },
+      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (User List)', description: 'Vision avancée pour documents structurés' },
       { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Modèle vision polyvalent' },
     ]
   },
