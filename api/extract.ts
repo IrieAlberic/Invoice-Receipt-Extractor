@@ -269,8 +269,16 @@ async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
     })
   });
 
-  const json = await response.json() as any;
-  if (!response.ok) throw new Error(`Python Microservice (${engine}) error ${response.status}: ${JSON.stringify(json)}`);
+  // MODIFICATION: Read as text first to avoid "Unexpected end of JSON input"
+  const text = await response.text();
+  if (!response.ok) throw new Error(`Python Microservice (${engine}) error ${response.status}: ${text.slice(0, 500)}`);
+
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Python Microservice (${engine}) returned invalid JSON. Raw response: ${text.slice(0, 500)}`);
+  }
   
   // Adapt this based on the actual Python microservice response structure
   return {
