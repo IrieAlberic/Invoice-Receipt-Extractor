@@ -225,7 +225,10 @@ async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
 
   const response = await fetch(baseUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "bypass-tunnel-reminder": "true"
+    },
     body: JSON.stringify({
       model: body.modelId,
       messages: [
@@ -262,7 +265,10 @@ async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
 
   const response = await fetch(baseUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "bypass-tunnel-reminder": "true"
+    },
     body: JSON.stringify({
       image_base64: body.fileBase64,
       mime_type: body.mimeType
