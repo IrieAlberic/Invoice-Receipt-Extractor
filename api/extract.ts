@@ -33,14 +33,14 @@ function parseJson(content: string): ExtractResult {
     // Attempt to find the first '{' and last '}' to extract only the JSON object
     const startIdx = content.indexOf('{');
     const endIdx = content.lastIndexOf('}');
-    
+
     if (startIdx === -1 || endIdx === -1) {
       throw new Error("No JSON object found in response");
     }
-    
+
     const jsonStr = content.substring(startIdx, endIdx + 1);
     const json = JSON.parse(jsonStr);
-    
+
     return {
       vendorName: json.vendorName || "Unknown",
       date: json.date,
@@ -138,9 +138,9 @@ async function handleMistralOCR(
 
   const json = await response.json() as any;
   if (!response.ok) throw new Error(`Mistral OCR error ${response.status}: ${JSON.stringify(json)}`);
-  
+
   const fullText = (json.pages || []).map((p: any) => p.markdown || "").join("\n\n");
-  
+
   return {
     vendorName: "Mistral OCR (raw)",
     totalAmount: 0,
@@ -207,7 +207,7 @@ async function handleOcrSpace(body: ExtractRequest): Promise<ExtractResult> {
   if (!response.ok) throw new Error(`OCR.space error: ${JSON.stringify(json)}`);
 
   const text = json.ParsedResults?.[0]?.ParsedText || "";
-  
+
   return {
     vendorName: "OCR.space (raw)",
     totalAmount: 0,
@@ -222,13 +222,10 @@ async function handleOcrSpace(body: ExtractRequest): Promise<ExtractResult> {
 async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
   const proxyUrl = body.ollamaUrl || process.env.OLLAMA_PROXY_URL;
   const baseUrl = proxyUrl ? `${proxyUrl}/api/chat` : "http://localhost:11434/api/chat";
-  
+
   const response = await fetch(baseUrl, {
     method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "bypass-tunnel-reminder": "true" 
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: body.modelId,
       messages: [
@@ -246,14 +243,14 @@ async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
   // MODIFICATION: Read as text first to handle empty/non-JSON responses better
   const text = await response.text();
   if (!response.ok) throw new Error(`Ollama error ${response.status}: ${text.slice(0, 500)}`);
-  
+
   let json;
   try {
     json = JSON.parse(text);
   } catch (e) {
     throw new Error(`Ollama returned invalid JSON. Raw response: ${text.slice(0, 500)}`);
   }
-  
+
   const content = json.message?.content || "";
   return parseJson(content);
 }
@@ -262,13 +259,10 @@ async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
   const engine = body.modelId; // tesseract, easyocr, paddleocr, etc.
   const proxyUrl = body.pythonUrl || process.env.PYTHON_PROXY_URL;
   const baseUrl = proxyUrl ? `${proxyUrl}/ocr/${engine}` : `http://localhost:8001/ocr/${engine}`;
-  
+
   const response = await fetch(baseUrl, {
     method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "bypass-tunnel-reminder": "true"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       image_base64: body.fileBase64,
       mime_type: body.mimeType
@@ -285,7 +279,7 @@ async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
   } catch (e) {
     throw new Error(`Python Microservice (${engine}) returned invalid JSON. Raw response: ${text.slice(0, 500)}`);
   }
-  
+
   // Adapt this based on the actual Python microservice response structure
   return {
     vendorName: json.vendor || `Python-${engine}`,
@@ -333,18 +327,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       case "deepseek":
         const siliconKey = process.env.SILICONFLOW_API_KEY || "";
         const deepseekKey = process.env.DEEPSEEK_API_KEY || "";
-        
+
         // Default to DeepSeek official
         let targetKey = deepseekKey || siliconKey;
         let targetBase = "https://api.deepseek.com/v1";
-        
+
         // FORCE SiliconFlow if vision is required (VL models) because DeepSeek official is text-only
         if (body.modelId.toLowerCase().includes("vl") || (!deepseekKey && siliconKey)) {
           if (!siliconKey) throw new Error("SiliconFlow API Key is required for DeepSeek Vision/VL models.");
           targetKey = siliconKey;
           targetBase = "https://api.siliconflow.cn/v1";
         }
-        
+
         result = await handleOpenAICompatible(body, targetKey, targetBase);
         break;
       case "hf":
