@@ -80,12 +80,14 @@ const PROVIDERS = [
     quota: 'Local — Gratuit (VRAM dépendant)',
     link: 'https://ollama.com',
     isLocal: true,
+    models: [
       { id: 'MedAIBase/PaddleOCR-VL:0.9b', name: 'PaddleOCR-VL (#1)', description: 'SOTA document parser (0.9B params)' },
       { id: 'moondream', name: 'Moondream (Ultra-Rapide)', description: 'Modèle vision minuscule pour démos rapides' },
       { id: 'qwen2.5-vl', name: 'Qwen2.5-VL (Flagship)', description: 'Nouveau standard vision de Qwen' },
       { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'SOTA vision OCR par AI2' },
       { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2 (#7)', description: 'Ultra-rapide, ~2 Go VRAM' },
       { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Modèle vision polyvalent' },
+    ]
   },
   {
     id: 'python',
