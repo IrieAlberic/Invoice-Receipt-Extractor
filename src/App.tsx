@@ -83,7 +83,8 @@ const PROVIDERS = [
     models: [
       { id: 'MedAIBase/PaddleOCR-VL:0.9b', name: 'PaddleOCR-VL (#1)', description: 'SOTA document parser (0.9B params)' },
       { id: 'moondream', name: 'Moondream (Ultra-Rapide)', description: 'Modèle vision minuscule pour démos rapides' },
-      { id: 'qwen2.5-vl', name: 'Qwen2.5-VL (Flagship)', description: 'Nouveau standard vision de Qwen' },
+      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (SOTA)', description: 'Modèle vision avancé présent sur votre PC' },
+      { id: 'qwen2.5-vl', name: 'Qwen2.5-VL (Flagship)', description: 'Nouveau standard (nouveau pull requis)' },
       { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'SOTA vision OCR par AI2' },
       { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2 (#7)', description: 'Ultra-rapide, ~2 Go VRAM' },
       { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Modèle vision polyvalent' },
@@ -123,8 +124,8 @@ export default function App() {
     const initial: Record<string, ProviderConfig> = {};
     PROVIDERS.forEach(p => {
       initial[p.id] = {
-        enabled: p.id === 'google' || p.id === 'groq',
-        selectedModelIds: p.id === 'google' ? ['gemini-2.5-flash'] : []
+        enabled: p.isLocal === true,
+        selectedModelIds: p.id === 'ollama' ? ['moondream'] : (p.id === 'python' ? ['paddleocr'] : [])
       };
     });
     return initial;
