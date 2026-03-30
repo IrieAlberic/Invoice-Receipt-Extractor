@@ -219,6 +219,50 @@ async function handleOcrSpace(body: ExtractRequest): Promise<ExtractResult> {
 
 // ─── Local Handlers (Ollama & Python) ───────────────────────────────────────
 
+async function refineWithAI(rawText: string, body: ExtractRequest): Promise<any> {
+  if (!rawText.trim()) return null;
+
+  // Use the local Ollama instance as a refiner to stay 100% offline
+  const proxyUrl = body.ollamaUrl || process.env.OLLAMA_PROXY_URL;
+  const baseUrl = proxyUrl ? `${proxyUrl}/api/generate` : "http://localhost:11434/api/generate";
+  const refinerModel = "mistral:latest"; 
+
+  const prompt = `Convert this raw text into a clean JSON invoice.
+JSON fields: vendorName, date (ISO), invoiceNumber, items (desc, qty, unitPrice, totalPrice, expenseAccount), taxAmount, totalAmount, currency (3-letters).
+Output ONLY the JSON object. No conversation.
+TEXT:
+${rawText}`;
+
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "bypass-tunnel-reminder": "true"
+      },
+      body: JSON.stringify({
+        model: refinerModel,
+        prompt: prompt,
+        stream: false,
+        format: "json"
+      }),
+      // Add a signal to handle timeouts gracefully if needed
+    });
+
+    if (!response.ok) {
+      console.error(`Refiner API error: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const content = data.response || "";
+    return parseJson(content);
+  } catch (e) {
+    console.error("Local Refiner Error (likely timeout):", e);
+    return null;
+  }
+}
+
 async function handleOllama(body: ExtractRequest): Promise<ExtractResult> {
   const proxyUrl = body.ollamaUrl || process.env.OLLAMA_PROXY_URL;
   const baseUrl = proxyUrl ? `${proxyUrl}/api/chat` : "http://localhost:11434/api/chat";
@@ -286,13 +330,33 @@ async function handlePythonOCR(body: ExtractRequest): Promise<ExtractResult> {
     throw new Error(`Python Microservice (${engine}) returned invalid JSON. Raw response: ${text.slice(0, 500)}`);
   }
 
-  // Adapt this based on the actual Python microservice response structure
+  const rawText = json.raw_text || "";
+  
+  // STEP 2: Refine raw text into a structured JSON using AI
+  const refined = await refineWithAI(rawText, body);
+  
+  if (refined) {
+    return {
+      vendorName: refined.vendorName || json.vendor || `Python-${engine}`,
+      date: refined.date || "",
+      invoiceNumber: refined.invoiceNumber || "",
+      totalAmount: refined.totalAmount || json.total || 0,
+      taxAmount: refined.taxAmount || 0,
+      currency: refined.currency || json.currency || "EUR",
+      items: refined.items || [],
+      rawText: rawText
+    };
+  }
+
   return {
     vendorName: json.vendor || `Python-${engine}`,
+    date: "",
+    invoiceNumber: "",
     totalAmount: json.total || 0,
+    taxAmount: 0,
     currency: json.currency || "EUR",
     items: json.items || [],
-    rawText: json.raw_text || ""
+    rawText: rawText
   };
 }
 

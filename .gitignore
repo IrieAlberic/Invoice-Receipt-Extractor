@@ -78,3 +78,6 @@ Thumbs.db
 # Git portable
 git/
 mingit.zip
+
+.vercel
+.env*.local
