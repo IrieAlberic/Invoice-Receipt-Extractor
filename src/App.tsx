@@ -11,6 +11,35 @@ import { extractReceiptData, ExtractionResult, ReceiptData } from './services/ge
 // ─── Free providers only — grouped by API provider ──────────────────────────
 const PROVIDERS = [
   {
+    id: 'ollama',
+    name: 'Ollama (Local)',
+    quota: 'Local — Gratuit (VRAM dépendant)',
+    link: 'https://ollama.com',
+    isLocal: true,
+    models: [
+      { id: 'MedAIBase/PaddleOCR-VL:0.9b', name: 'PaddleOCR-VL (#1)', description: 'SOTA document parser (0.9B params)' },
+      { id: 'moondream', name: 'Moondream (Ultra-Rapide)', description: 'Modèle vision minuscule pour démos rapides' },
+      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (SOTA)', description: 'Modèle vision avancé présent sur votre PC' },
+      { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'SOTA vision OCR par AI2' },
+      { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2 (#7)', description: 'Ultra-rapide, ~2 Go VRAM' },
+      { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Modèle vision polyvalent' },
+    ]
+  },
+  {
+    id: 'python',
+    name: 'Microservice Python',
+    quota: 'Local — Gratuit',
+    link: 'http://localhost:8001',
+    isLocal: true,
+    models: [
+      { id: 'tesseract', name: 'Tesseract', description: 'Moteur classique robuste' },
+      { id: 'easyocr', name: 'EasyOCR', description: 'Supporte 80+ langues, basé sur PyTorch' },
+      { id: 'paddleocr', name: 'PaddleOCR', description: 'Baidu, excellent sur les reçus' },
+      { id: 'docling', name: 'Docling', description: 'IBM, spécialisé structuration document' },
+      { id: 'rapidocr', name: 'RapidOCR', description: 'Version légère et performante de Paddle' },
+    ]
+  },
+  {
     id: 'google',
     name: 'Google Gemini',
     quota: '1 500 req/jour — Gratuit',
@@ -74,36 +103,6 @@ const PROVIDERS = [
       { id: 'ocr-space-engine2', name: 'OCR.space Engine 2', description: 'Moteur IA pour reçus/factures, 26 langues' },
     ]
   },
-  {
-    id: 'ollama',
-    name: 'Ollama (Local)',
-    quota: 'Local — Gratuit (VRAM dépendant)',
-    link: 'https://ollama.com',
-    isLocal: true,
-    models: [
-      { id: 'MedAIBase/PaddleOCR-VL:0.9b', name: 'PaddleOCR-VL (#1)', description: 'SOTA document parser (0.9B params)' },
-      { id: 'moondream', name: 'Moondream (Ultra-Rapide)', description: 'Modèle vision minuscule pour démos rapides' },
-      { id: 'qwen3-vl:8b', name: 'Qwen3-VL (SOTA)', description: 'Modèle vision avancé présent sur votre PC' },
-      { id: 'qwen2.5-vl', name: 'Qwen2.5-VL (Flagship)', description: 'Nouveau standard (nouveau pull requis)' },
-      { id: 'richardyoung/olmocr2:7b-q8', name: 'OlmOCR-2 (#5)', description: 'SOTA vision OCR par AI2' },
-      { id: 'maternion/lightonocr-2:latest', name: 'LightOnOCR-2 (#7)', description: 'Ultra-rapide, ~2 Go VRAM' },
-      { id: 'llava:latest', name: 'LLaVA (Standard)', description: 'Modèle vision polyvalent' },
-    ]
-  },
-  {
-    id: 'python',
-    name: 'Microservice Python',
-    quota: 'Local — Gratuit',
-    link: 'http://localhost:8001',
-    isLocal: true,
-    models: [
-      { id: 'tesseract', name: 'Tesseract', description: 'Moteur classique robuste' },
-      { id: 'easyocr', name: 'EasyOCR', description: 'Supporte 80+ langues, basé sur PyTorch' },
-      { id: 'paddleocr', name: 'PaddleOCR', description: 'Baidu, excellent sur les reçus' },
-      { id: 'docling', name: 'Docling', description: 'IBM, spécialisé structuration document' },
-      { id: 'rapidocr', name: 'RapidOCR', description: 'Version légère et performante de Paddle' },
-    ]
-  },
 ];
 
 interface ProviderConfig {
@@ -116,8 +115,8 @@ export default function App() {
   const [preview, setPreview] = useState<string | null>(null);
   const [results, setResults] = useState<ExtractionResult[]>([]);
   const [isExtracting, setIsExtracting] = useState(false);
-  const [ollamaUrl, setOllamaUrl] = useState("");
-  const [pythonUrl, setPythonUrl] = useState("");
+  const [ollamaUrl, setOllamaUrl] = useState("http://localhost:11434");
+  const [pythonUrl, setPythonUrl] = useState("http://localhost:8001");
 
   // Initialize one entry per provider
   const [activeProviders, setActiveProviders] = useState<Record<string, ProviderConfig>>(() => {
