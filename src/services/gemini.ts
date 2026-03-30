@@ -44,9 +44,11 @@ export const receiptSchema = {
 };
 
 export interface ExtractionResult {
+  id: string;
   data: ReceiptData | null;
   executionTime: number;
   model: string;
+  status: 'pending' | 'success' | 'error';
   error?: string;
 }
 
@@ -87,7 +89,13 @@ export async function extractReceiptData(
 
       const endTime = performance.now();
       const data = JSON.parse(response.text || "{}") as ReceiptData;
-      return { data, executionTime: Math.round(endTime - startTime), model: modelId };
+      return { 
+        id: Math.random().toString(36).substr(2, 9),
+        data, 
+        executionTime: Math.round(endTime - startTime), 
+        model: modelId,
+        status: 'success'
+      };
     } else {
       // Call our local Express server for external providers
       const response = await fetch('/api/extract', {
@@ -121,14 +129,24 @@ export async function extractReceiptData(
         throw new Error("Empty response from server");
       }
 
-      return JSON.parse(text);
+      const data = JSON.parse(text) as ReceiptData;
+      const endTime = performance.now();
+      return { 
+        id: Math.random().toString(36).substr(2, 9),
+        data, 
+        executionTime: Math.round(endTime - startTime), 
+        model: modelId,
+        status: 'success'
+      };
     }
   } catch (error: any) {
     const endTime = performance.now();
     return {
+      id: Math.random().toString(36).substr(2, 9),
       data: null,
       executionTime: Math.round(endTime - startTime),
       model: modelId,
+      status: 'error',
       error: error.message || "An unknown error occurred",
     };
   }

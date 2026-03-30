@@ -178,23 +178,44 @@ export default function App() {
     if (selectedTasks.length === 0) return;
 
     setIsExtracting(true);
-    setResults([]);
+    setResults([]); // Clear results visually
 
     const base64Data = preview.split(',')[1];
     const mimeType = file.type;
 
-    const extractionPromises = selectedTasks.map(({ providerId, modelId }) =>
-      extractReceiptData(base64Data, mimeType, modelId, providerId, ollamaUrl, pythonUrl)
-    );
+    // Process tasks sequentially for better stability on local hardware
+    for (const { providerId, modelId } of selectedTasks) {
+      // 1. Create a "Pending" placeholder so the user sees progress
+      const resultId = Math.random().toString(36).substr(2, 9);
+      const placeholder: ExtractionResult = {
+        id: resultId,
+        data: null,
+        executionTime: 0,
+        model: modelId,
+        status: 'pending',
+        error: "Extraction en cours..."
+      };
+      
+      setResults(prev => [...prev, placeholder]);
 
-    try {
-      const newResults = await Promise.all(extractionPromises);
-      setResults(newResults);
-    } catch (error) {
-      console.error("Extraction failed:", error);
-    } finally {
-      setIsExtracting(false);
+      try {
+        const result = await extractReceiptData(base64Data, mimeType, modelId, providerId, ollamaUrl, pythonUrl);
+        
+        // 2. Replace the placeholder with the actual result
+        setResults(prev => prev.map(r => r.id === resultId ? result : r));
+      } catch (error: any) {
+        setResults(prev => prev.map(r => r.id === resultId ? {
+          id: resultId,
+          data: null,
+          executionTime: 0,
+          model: modelId,
+          status: 'error',
+          error: error.message || "Erreur inconnue"
+        } : r));
+      }
     }
+
+    setIsExtracting(false);
   };
 
   const clearResults = () => {
@@ -484,12 +505,12 @@ export default function App() {
                             const info = getModelInfo(result.model);
                             const score = calculateAccuracyScore(result.data);
                             return (
-                              <tr key={result.model} className="border-b border-[#141414]/5 hover:bg-[#141414]/5 transition-colors">
+                              <tr key={result.id} className="border-b border-[#141414]/5 hover:bg-[#141414]/5 transition-colors">
                                 <td className="p-4 text-xs font-bold">{info.name}</td>
                                 <td className="p-4 text-[10px] font-mono opacity-60 uppercase">{info.provider}</td>
                                 <td className="p-4 text-xs font-mono">
-                                  <span className={`px-2 py-1 rounded ${result.executionTime < 2000 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                                    {result.executionTime}ms
+                                  <span className={`px-2 py-1 rounded ${result.status === 'pending' ? 'bg-gray-100 text-gray-500' : (result.executionTime < 2000 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')}`}>
+                                    {result.status === 'pending' ? '---' : `${result.executionTime}ms`}
                                   </span>
                                 </td>
                                 <td className="p-4">
@@ -504,7 +525,9 @@ export default function App() {
                                   </div>
                                 </td>
                                 <td className="p-4">
-                                  {result.error ? (
+                                  {result.status === 'pending' ? (
+                                    <span className="text-[10px] font-mono text-gray-500 uppercase font-bold animate-pulse">Extraction...</span>
+                                  ) : result.error ? (
                                     <span className="text-[10px] font-mono text-red-500 uppercase font-bold">Error</span>
                                   ) : (
                                     <span className="text-[10px] font-mono text-emerald-500 uppercase font-bold">Success</span>
@@ -522,7 +545,7 @@ export default function App() {
                 <AnimatePresence mode="popLayout">
                   {results.map((result, idx) => (
                     <motion.div
-                      key={result.model}
+                      key={result.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
@@ -551,8 +574,8 @@ export default function App() {
                           <div className="text-right">
                             <p className="text-[9px] font-mono opacity-50 uppercase">Latency</p>
                             <p className="text-sm font-bold flex items-center gap-1">
-                              <Clock size={12} className="text-emerald-500" />
-                              {result.executionTime}ms
+                              <Clock size={12} className={result.status === 'pending' ? 'text-gray-400' : 'text-emerald-500'} />
+                              {result.status === 'pending' ? '...' : `${result.executionTime}ms`}
                             </p>
                           </div>
                           <button
@@ -567,7 +590,13 @@ export default function App() {
 
                       {/* Result Content */}
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {result.error ? (
+                        {result.status === 'pending' ? (
+                          <div className="col-span-2 p-12 flex flex-col items-center justify-center border-2 border-dashed border-[#141414]/10 rounded-2xl">
+                             <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                             <p className="text-sm font-bold uppercase tracking-widest">Extraction en cours...</p>
+                             <p className="text-xs opacity-50 mt-2 font-mono">Modèle: {result.model}</p>
+                          </div>
+                        ) : result.error ? (
                           <div className="col-span-2 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3">
                             <AlertCircle className="text-red-500 shrink-0" size={18} />
                             <div>
